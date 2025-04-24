@@ -1,103 +1,59 @@
-import Image from "next/image";
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-gray-900 via-gray-950 to-black text-white">
+      
+      <section className="flex flex-col items-center text-center px-6 pt-20 pb-12">
+        <h1 className="text-5xl font-extrabold mb-4 text-pink-400 drop-shadow-lg">3GWish</h1>
+        <p className="text-xl text-gray-300 max-w-2xl mb-6">
+          Цифрові NFT-листівки для свят, днів народження та особливих моментів. Анімовані, персоналізовані, з крипто-подарунками.
+        </p>
+        <button className="bg-pink-600 hover:bg-pink-700 transition px-6 py-3 rounded-xl text-white text-lg shadow-lg mb-4">
+          🔗 Підключити гаманець
+        </button>
+        <Link
+          href="/cards"
+          className="text-pink-400 underline hover:text-pink-300 transition"
+        >
+          Переглянути мої листівки →
+        </Link>
+      </section>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
+      
+      <section className="bg-gray-800 py-12 px-6 text-center">
+        <h2 className="text-3xl font-semibold mb-8">Чому NFT-листівки?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto text-gray-200">
+          <div className="bg-gray-900 rounded-xl p-6 shadow-md">
+            🎁 <h3 className="text-xl font-bold mb-2">Подарунок назавжди</h3>
+            <p>На відміну від тимчасових онлайн-листівок, NFT зберігаються в гаманці назавжди.</p>
+          </div>
+          <div className="bg-gray-900 rounded-xl p-6 shadow-md">
+            💌 <h3 className="text-xl font-bold mb-2">Персональне привітання</h3>
+            <p>Ти можеш додати текст, анімацію й навіть невеликий крипто-бонус.</p>
+          </div>
+          <div className="bg-gray-900 rounded-xl p-6 shadow-md">
+            🌐 <h3 className="text-xl font-bold mb-2">Web3-досвід</h3>
+            <p>Підключення через гаманець. Жодної реєстрації, усе децентралізовано.</p>
+          </div>
+        </div>
+      </section>
+
+      
+      <footer className="bg-gray-900 text-gray-400 py-6 px-4 text-center text-sm mt-8">
+        <p className="mb-2">&copy; {new Date().getFullYear()} 3GWish. Всі права захищено.</p>
+        <div className="flex justify-center space-x-4">
+          <a href="https://twitter.com/3gwish" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">
+            Twitter
           </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
+          <a href="https://t.me/threegwish" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">
+            Telegram
+          </a>
+          <a href="mailto:team@3gwish.xyz" className="hover:text-pink-400">
+            Email
           </a>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
       </footer>
-    </div>
+    </main>
   );
 }
