@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import  PhantomConnection  from "./components/PhantomConnection";
+
 
 export default function Home() {
   return (
@@ -9,9 +11,7 @@ export default function Home() {
         <p className="text-xl text-gray-300 max-w-2xl mb-6">
           Цифрові NFT-листівки для свят, днів народження та особливих моментів. Анімовані, персоналізовані, з крипто-подарунками.
         </p>
-        <button className="bg-pink-600 hover:bg-pink-700 transition px-6 py-3 rounded-xl text-white text-lg shadow-lg mb-4">
-          🔗 Підключити гаманець
-        </button>
+        <PhantomConnection />
         <Link
           href="/cards"
           className="text-pink-400 underline hover:text-pink-300 transition"
