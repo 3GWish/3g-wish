@@ -1,5 +1,9 @@
-"use client"
+'use client';
+
 import { useState } from 'react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { GiftNFT } from '@/app/lib/gift-nft'
+import { toast } from 'sonner'; 
 
 const templates = {
   birthday: '/templates/birthday.png',
@@ -10,22 +14,39 @@ const templates = {
 type TemplateKey = keyof typeof templates;
 
 export default function CreateCard() {
+  const wallet = useWallet();
   const [message, setMessage] = useState('');
+  const [recipientWallet, setRecipientWallet] = useState('');
   const [template, setTemplate] = useState<TemplateKey>('birthday');
+  const [loading, setLoading] = useState(false);
 
-  const handleMint = () => {
-    const metadata = {
-      template: templates[template],
-      message: message || 'Напиши щось тепле...',
-      recipientWallet: 'Адреса гаманця отримувача',
-      createdAt: new Date().toISOString(),
-    };
+  const handleMint = async () => {
+    if (!wallet.connected || !wallet.publicKey) {
+      toast.error("Підключіть гаманець перед мінтом!");
+      return;
+    }
 
-    alert(`Мета-дані для мінта NFT:
-    Шаблон: ${metadata.template}
-    Повідомлення: ${metadata.message}
-    Адресат: ${metadata.recipientWallet}
-    Дата створення: ${metadata.createdAt}`);
+    if (!recipientWallet) {
+      toast.error("Введіть адресу гаманця отримувача.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const nftAddress = await GiftNFT(
+        wallet,
+        message || 'Напиши щось тепле...',
+        recipientWallet,
+        templates[template]
+      );
+
+      toast.success(`NFT успішно створено! Адреса: ${nftAddress}`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Сталася помилка під час мінта.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,7 +69,7 @@ export default function CreateCard() {
           </div>
         </div>
 
-        
+      
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">Привітання:</label>
@@ -74,11 +95,23 @@ export default function CreateCard() {
             </select>
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Гаманець отримувача:</label>
+            <input
+              type="text"
+              value={recipientWallet}
+              onChange={(e) => setRecipientWallet(e.target.value)}
+              placeholder="Наприклад: 5Dk...kLu"
+              className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
+            />
+          </div>
+
           <button
             onClick={handleMint}
-            className="bg-pink-600 hover:bg-pink-700 transition px-6 py-3 rounded-xl text-white text-lg shadow"
+            disabled={loading}
+            className="bg-pink-600 hover:bg-pink-700 transition px-6 py-3 rounded-xl text-white text-lg shadow disabled:opacity-50"
           >
-            Створити NFT 
+            {loading ? 'Мінтимо...' : 'Створити NFT'}
           </button>
         </div>
       </div>
