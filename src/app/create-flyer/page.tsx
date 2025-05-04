@@ -9,6 +9,7 @@ const templates = {
   birthday: '/templates/birthday.png',
   valentine: '/templates/valentine.png',
   newyear: '/templates/newyear.png',
+  custom: '', // для користувацького зображення
 } as const;
 
 type TemplateKey = keyof typeof templates;
@@ -18,7 +19,17 @@ export default function CreateCard() {
   const [message, setMessage] = useState('');
   const [recipientWallet, setRecipientWallet] = useState('');
   const [template, setTemplate] = useState<TemplateKey>('birthday');
+  const [customImage, setCustomImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setCustomImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleMint = async () => {
     if (!wallet.connected || !wallet.publicKey) {
@@ -31,13 +42,21 @@ export default function CreateCard() {
       return;
     }
 
+    const imageUrl =
+      template === 'custom' && customImage ? customImage : templates[template];
+
+    if (!imageUrl) {
+      toast.error("Оберіть шаблон або завантажте зображення.");
+      return;
+    }
+
     setLoading(true);
     try {
       const nftAddress = await GiftNFT(
         wallet,
         message || 'Напиши щось тепле...',
         recipientWallet,
-        templates[template]
+        imageUrl
       );
 
       toast.success(`NFT успішно створено! Адреса: ${nftAddress}`);
@@ -54,22 +73,17 @@ export default function CreateCard() {
       <h1 className="text-3xl font-bold text-pink-400 mb-6">Створити NFT-листівку</h1>
 
       <div className="grid md:grid-cols-2 gap-8">
-        
         <div className="bg-gray-900 p-4 rounded-xl shadow-lg flex flex-col items-center">
           <h2 className="text-xl font-semibold mb-4">Превʼю</h2>
           <div className="relative w-full aspect-[4/5] max-w-sm border-4 border-pink-400 rounded-xl overflow-hidden bg-white">
             <img
-              src={templates[template]}
+              src={template === 'custom' ? customImage || '' : templates[template]}
               alt="Template"
               className="absolute w-full h-full object-cover"
-            />
-            <p className="absolute bottom-4 left-4 right-4 text-black text-lg font-bold bg-white bg-opacity-70 rounded p-2">
-              {message || 'Напиши щось тепле...'}
-            </p>
+            />            
           </div>
         </div>
 
-      
         <div className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">Привітання:</label>
@@ -92,8 +106,21 @@ export default function CreateCard() {
               <option value="birthday">🎉 День народження</option>
               <option value="valentine">💖 Валентинка</option>
               <option value="newyear">🌟 Новий рік</option>
+              <option value="custom">📁 Завантажити своє</option>
             </select>
           </div>
+
+          {template === 'custom' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Ваше зображення:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">Гаманець отримувача:</label>
