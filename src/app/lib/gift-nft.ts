@@ -42,7 +42,7 @@ export async function GiftNFT(
   const imageUrl = `https://gateway.pinata.cloud/ipfs/${uploadedImage.data.IpfsHash}`;
 
   const metadata = {
-    name: `NFT-листівка`,
+    name: `Gift NFT Card`,
     description: message,
     image: imageUrl,
     attributes: [

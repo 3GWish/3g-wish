@@ -12,22 +12,25 @@ export default function Cards() {
   useEffect(() => {
     const fetchNFTs = async () => {
       if (!publicKey || !wallet) return;
-
+    
       const connection = new Connection(clusterApiUrl('devnet'));
       const metaplex = Metaplex.make(connection).use(walletAdapterIdentity(wallet.adapter));
-
+    
       const allNfts = await metaplex.nfts().findAllByOwner({ owner: publicKey });
-
-      
+    
       const detailedNfts = await Promise.all(
         allNfts
           .filter((nft) => nft.model === 'metadata')
           .map(async (nft) => await metaplex.nfts().load({ metadata: nft }))
-      );
-
-      const onlyNfts = detailedNfts.filter(nft => nft.model === 'nft') as Nft[];
-      setNfts(onlyNfts);
+      );    
+      
+      const onlyGiftNfts = detailedNfts.filter(
+        (nft) => nft.model === 'nft' && nft.symbol === 'GIFT'
+      ) as Nft[];
+    
+      setNfts(onlyGiftNfts);
     };
+    
 
     fetchNFTs();
   }, [publicKey, wallet]);
