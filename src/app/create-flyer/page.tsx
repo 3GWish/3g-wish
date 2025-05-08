@@ -9,7 +9,7 @@ const templates = {
   birthday: '/templates/birthday.png',
   valentine: '/templates/valentine.png',
   newyear: '/templates/newyear.png',
-  custom: '', // для користувацького зображення
+  custom: '', 
 } as const;
 
 type TemplateKey = keyof typeof templates;

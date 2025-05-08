@@ -16,13 +16,7 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center">
-          <Image
-            src="/nft-card-preview.png"
-            alt="NFT листівка"
-            width={400}
-            height={300}
-            className="rounded-xl shadow-lg"
-          />
+          
         </div>
       </section>
 
