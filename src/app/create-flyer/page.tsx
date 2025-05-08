@@ -1,15 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { GiftNFT } from '@/app/lib/gift-nft'
-import { toast } from 'sonner'; 
+import { GiftNFT } from '@/app/lib/gift-nft';
+import { toast } from 'sonner';
+
+type UserTemplate = {
+  id: string;
+  name: string;
+  message: string;
+  image: string;
+};
+
+type CustomTemplate = {
+  image: string;
+  message: string;
+  name: string;
+};
 
 const templates = {
   birthday: '/templates/birthday.png',
   valentine: '/templates/valentine.png',
   newyear: '/templates/newyear.png',
-  custom: '', 
+  custom: '',
+  user: '',
+  customTemplate: '', 
 } as const;
 
 type TemplateKey = keyof typeof templates;
@@ -20,7 +35,23 @@ export default function CreateCard() {
   const [recipientWallet, setRecipientWallet] = useState('');
   const [template, setTemplate] = useState<TemplateKey>('birthday');
   const [customImage, setCustomImage] = useState<string | null>(null);
+  const [userTemplates, setUserTemplates] = useState<UserTemplate[]>([]);
+  const [selectedUserTemplateId, setSelectedUserTemplateId] = useState<string | null>(null);
+  const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>([]);
+  const [selectedCustomTemplateIndex, setSelectedCustomTemplateIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+
+  
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user-templates');
+    if (storedUser) {
+      setUserTemplates(JSON.parse(storedUser));
+    }
+    const storedCustom = localStorage.getItem('customTemplates');
+    if (storedCustom) {
+      setCustomTemplates(JSON.parse(storedCustom));
+    }
+  }, []);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -31,38 +62,62 @@ export default function CreateCard() {
     }
   };
 
+  const handleUserTemplateChange = (id: string) => {
+    setSelectedUserTemplateId(id);
+    setSelectedCustomTemplateIndex(null);
+    const template = userTemplates.find((t) => t.id === id);
+    if (template) {
+      setMessage(template.message);
+      setCustomImage(template.image);
+    }
+  };
+
+  const handleCustomTemplateChange = (index: number) => {
+    setSelectedCustomTemplateIndex(index);
+    setSelectedUserTemplateId(null);
+    const template = customTemplates[index];
+    if (template) {
+      setMessage(template.message);
+      setCustomImage(template.image);
+    }
+  };
+
   const handleMint = async () => {
     if (!wallet.connected || !wallet.publicKey) {
-      toast.error("Підключіть гаманець перед мінтом!");
+      toast.error('Підключіть гаманець перед мінтом!');
       return;
     }
 
     if (!recipientWallet) {
-      toast.error("Введіть адресу гаманця отримувача.");
+      toast.error('Введіть адресу гаманця отримувача.');
       return;
     }
 
-    const imageUrl =
-      template === 'custom' && customImage ? customImage : templates[template];
+    let imageUrl = '';
+
+    if (template === 'custom' && customImage) {
+      imageUrl = customImage;
+    } else if (template === 'user' && selectedUserTemplateId) {
+      const t = userTemplates.find((t) => t.id === selectedUserTemplateId);
+      imageUrl = t?.image || '';
+    } else if (template === 'customTemplate' && selectedCustomTemplateIndex !== null) {
+      imageUrl = customTemplates[selectedCustomTemplateIndex].image;
+    } else {
+      imageUrl = templates[template];
+    }
 
     if (!imageUrl) {
-      toast.error("Оберіть шаблон або завантажте зображення.");
+      toast.error('Оберіть шаблон або завантажте зображення.');
       return;
     }
 
     setLoading(true);
     try {
-      const nftAddress = await GiftNFT(
-        wallet,
-        message || 'Напиши щось тепле...',
-        recipientWallet,
-        imageUrl
-      );
-
+      const nftAddress = await GiftNFT(wallet, message || 'Напиши щось тепле...', recipientWallet, imageUrl);
       toast.success(`NFT успішно створено! Адреса: ${nftAddress}`);
     } catch (err) {
       console.error(err);
-      toast.error("Сталася помилка під час мінта.");
+      toast.error('Сталася помилка під час мінта.');
     } finally {
       setLoading(false);
     }
@@ -77,10 +132,21 @@ export default function CreateCard() {
           <h2 className="text-xl font-semibold mb-4">Превʼю</h2>
           <div className="relative w-full aspect-[4/5] max-w-sm border-4 border-pink-400 rounded-xl overflow-hidden bg-white">
             <img
-              src={template === 'custom' ? customImage || '' : templates[template]}
+              src={
+                template === 'custom'
+                  ? customImage || ''
+                  : template === 'user'
+                  ? userTemplates.find((t) => t.id === selectedUserTemplateId)?.image || ''
+                  : template === 'customTemplate' && selectedCustomTemplateIndex !== null
+                  ? customTemplates[selectedCustomTemplateIndex]?.image || ''
+                  : templates[template]
+              }
               alt="Template"
               className="absolute w-full h-full object-cover"
-            />            
+            />
+            <p className="absolute bottom-4 left-4 right-4 text-black text-lg font-bold bg-white bg-opacity-70 rounded p-2">
+              {message || 'Напиши щось тепле...'}
+            </p>
           </div>
         </div>
 
@@ -100,13 +166,19 @@ export default function CreateCard() {
             <label className="block text-sm font-medium text-gray-300 mb-1">Шаблон:</label>
             <select
               value={template}
-              onChange={(e) => setTemplate(e.target.value as TemplateKey)}
+              onChange={(e) => {
+                setTemplate(e.target.value as TemplateKey);
+                if (e.target.value !== 'user') setSelectedUserTemplateId(null);
+                if (e.target.value !== 'customTemplate') setSelectedCustomTemplateIndex(null);
+              }}
               className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
             >
               <option value="birthday">🎉 День народження</option>
               <option value="valentine">💖 Валентинка</option>
               <option value="newyear">🌟 Новий рік</option>
               <option value="custom">📁 Завантажити своє</option>
+              {userTemplates.length > 0 && <option value="user">👤 Мої шаблони</option>}
+              {customTemplates.length > 0 && <option value="customTemplate">🖼️ Мої завантажені</option>}
             </select>
           </div>
 
@@ -119,6 +191,46 @@ export default function CreateCard() {
                 onChange={handleImageUpload}
                 className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
               />
+            </div>
+          )}
+
+          {template === 'user' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Оберіть свій шаблон:</label>
+              <select
+                value={selectedUserTemplateId || ''}
+                onChange={(e) => handleUserTemplateChange(e.target.value)}
+                className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
+              >
+                <option value="" disabled>
+                  -- Оберіть --
+                </option>
+                {userTemplates.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    🖼️ {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {template === 'customTemplate' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Оберіть завантажений шаблон:</label>
+              <select
+                value={selectedCustomTemplateIndex !== null ? selectedCustomTemplateIndex : ''}
+                onChange={(e) => handleCustomTemplateChange(parseInt(e.target.value))}
+                className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
+              >
+                <option value="" disabled>
+                  -- Оберіть --
+                </option>
+                {customTemplates.map((t, index) => (
+                  <option key={index} value={index}>
+                    🖼️ {t.name || `Шаблон ${index + 1}`}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
 
