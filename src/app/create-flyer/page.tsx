@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { GiftNFT } from '@/app/lib/gift-nft';
 import { toast } from 'sonner';
-
+import Modal from '../components/Modal';
 type UserTemplate = {
   id: string;
   name: string;
@@ -24,7 +24,7 @@ const templates = {
   newyear: '/templates/newyear.png',
   custom: '',
   user: '',
-  customTemplate: '', 
+  customTemplate: '',
 } as const;
 
 type TemplateKey = keyof typeof templates;
@@ -40,8 +40,10 @@ export default function CreateCard() {
   const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>([]);
   const [selectedCustomTemplateIndex, setSelectedCustomTemplateIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [daysVisited, setDaysVisited] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
-  
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user-templates');
     if (storedUser) {
@@ -52,6 +54,35 @@ export default function CreateCard() {
       setCustomTemplates(JSON.parse(storedCustom));
     }
   }, []);
+
+  useEffect(() => {
+    const savedDates = JSON.parse(localStorage.getItem('visit_dates') || '[]');
+    const today = new Date().toISOString().split('T')[0];
+
+
+    const alreadyVisitedToday = savedDates.includes(today);
+
+    if (!alreadyVisitedToday) {
+      savedDates.push(today);
+      localStorage.setItem('visit_dates', JSON.stringify(savedDates));
+    }
+
+    setDaysVisited(savedDates.length);
+
+    if (savedDates.length >= 1) {
+      setShowModal(true);
+    }
+  }, []);
+
+
+  const handleCloseModal = () => {
+    setShowModal(false); 
+  };
+
+  const handleConfirmModal = () => {    
+    toast.success('Ви отримали NFT за вашу активність!');
+    setShowModal(false); 
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -136,10 +167,10 @@ export default function CreateCard() {
                 template === 'custom'
                   ? customImage || ''
                   : template === 'user'
-                  ? userTemplates.find((t) => t.id === selectedUserTemplateId)?.image || ''
-                  : template === 'customTemplate' && selectedCustomTemplateIndex !== null
-                  ? customTemplates[selectedCustomTemplateIndex]?.image || ''
-                  : templates[template]
+                    ? userTemplates.find((t) => t.id === selectedUserTemplateId)?.image || ''
+                    : template === 'customTemplate' && selectedCustomTemplateIndex !== null
+                      ? customTemplates[selectedCustomTemplateIndex]?.image || ''
+                      : templates[template]
               }
               alt="Template"
               className="absolute w-full h-full object-cover"
@@ -254,6 +285,11 @@ export default function CreateCard() {
           </button>
         </div>
       </div>
+      <Modal
+        isVisible={showModal}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmModal}
+      />
     </main>
   );
 }
