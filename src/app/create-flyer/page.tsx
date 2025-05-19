@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { GiftNFT } from '@/app/lib/gift-nft';
 import { toast } from 'sonner';
-import Modal from '../components/Modal';
+import ActivityRewardModal from '@/app/components/ActivityRewardModal';
+
 type UserTemplate = {
   id: string;
   name: string;
@@ -41,8 +42,8 @@ export default function CreateCard() {
   const [selectedCustomTemplateIndex, setSelectedCustomTemplateIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [daysVisited, setDaysVisited] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-
+  const [showRewardModal, setShowRewardModal] = useState(false);
+  const [projectId] = useState('nft-greetings-app'); 
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user-templates');
@@ -59,7 +60,6 @@ export default function CreateCard() {
     const savedDates = JSON.parse(localStorage.getItem('visit_dates') || '[]');
     const today = new Date().toISOString().split('T')[0];
 
-
     const alreadyVisitedToday = savedDates.includes(today);
 
     if (!alreadyVisitedToday) {
@@ -69,19 +69,14 @@ export default function CreateCard() {
 
     setDaysVisited(savedDates.length);
 
-    if (savedDates.length >= 1) {
-      setShowModal(true);
+    
+    if (!alreadyVisitedToday && savedDates.length >= 1) {
+      setShowRewardModal(true);
     }
   }, []);
 
-
-  const handleCloseModal = () => {
-    setShowModal(false); 
-  };
-
-  const handleConfirmModal = () => {    
-    toast.success('Ви отримали NFT за вашу активність!');
-    setShowModal(false); 
+  const handleCloseRewardModal = () => {
+    setShowRewardModal(false);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -285,10 +280,12 @@ export default function CreateCard() {
           </button>
         </div>
       </div>
-      <Modal
-        isVisible={showModal}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmModal}
+
+      <ActivityRewardModal
+        isVisible={showRewardModal}
+        onClose={handleCloseRewardModal}
+        projectId={projectId}
+        activeDays={daysVisited}
       />
     </main>
   );
