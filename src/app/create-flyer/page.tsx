@@ -150,13 +150,13 @@ export default function CreateCard() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
-      <h1 className="text-3xl font-bold text-pink-400 mb-6">Створити NFT-листівку</h1>
+    <main className="min-h-screen bg-black text-white p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold text-pink-400 mb-4 sm:mb-6">Створити NFT-листівку</h1>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="bg-gray-900 p-4 rounded-xl shadow-lg flex flex-col items-center">
-          <h2 className="text-xl font-semibold mb-4">Превʼю</h2>
-          <div className="relative w-full aspect-[4/5] max-w-sm border-4 border-pink-400 rounded-xl overflow-hidden bg-white">
+      <div className="grid md:grid-cols-2 gap-4 sm:gap-8">
+        <div className="bg-gray-900 p-3 sm:p-4 rounded-xl shadow-lg flex flex-col items-center">
+          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Превʼю</h2>
+          <div className="relative w-full aspect-[4/5] max-w-[280px] sm:max-w-sm border-4 border-pink-400 rounded-xl overflow-hidden bg-white">
             <img
               src={
                 template === 'custom'
@@ -170,20 +170,20 @@ export default function CreateCard() {
               alt="Template"
               className="absolute w-full h-full object-cover"
             />
-            <p className="absolute bottom-4 left-4 right-4 text-black text-lg font-bold bg-white bg-opacity-70 rounded p-2">
+            <p className="absolute bottom-4 left-4 right-4 text-black text-base sm:text-lg font-bold bg-white bg-opacity-70 rounded p-2">
               {message || 'Напиши щось тепле...'}
             </p>
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1">Привітання:</label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
-              rows={5}
+              className="w-full p-2 sm:p-3 rounded-lg bg-gray-800 text-white border border-gray-600 text-sm sm:text-base"
+              rows={4}
               placeholder="Напиши щось тепле..."
             />
           </div>
@@ -197,7 +197,7 @@ export default function CreateCard() {
                 if (e.target.value !== 'user') setSelectedUserTemplateId(null);
                 if (e.target.value !== 'customTemplate') setSelectedCustomTemplateIndex(null);
               }}
-              className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
+              className="w-full p-2 sm:p-3 rounded-lg bg-gray-800 text-white border border-gray-600 text-sm sm:text-base"
             >
               <option value="birthday">🎉 День народження</option>
               <option value="valentine">💖 Валентинка</option>
@@ -215,7 +215,7 @@ export default function CreateCard() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600"
+                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 text-sm"
               />
             </div>
           )}
@@ -226,7 +226,7 @@ export default function CreateCard() {
               <select
                 value={selectedUserTemplateId || ''}
                 onChange={(e) => handleUserTemplateChange(e.target.value)}
-                className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
+                className="w-full p-2 sm:p-3 rounded-lg bg-gray-800 text-white border border-gray-600 text-sm sm:text-base"
               >
                 <option value="" disabled>
                   -- Оберіть --
@@ -246,14 +246,14 @@ export default function CreateCard() {
               <select
                 value={selectedCustomTemplateIndex !== null ? selectedCustomTemplateIndex : ''}
                 onChange={(e) => handleCustomTemplateChange(parseInt(e.target.value))}
-                className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
+                className="w-full p-2 sm:p-3 rounded-lg bg-gray-800 text-white border border-gray-600 text-sm sm:text-base"
               >
                 <option value="" disabled>
                   -- Оберіть --
                 </option>
                 {customTemplates.map((t, index) => (
                   <option key={index} value={index}>
-                    🖼️ {t.name || `Шаблон ${index + 1}`}
+                    🖼️ {t.name}
                   </option>
                 ))}
               </select>
@@ -261,32 +261,33 @@ export default function CreateCard() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Гаманець отримувача:</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Адреса гаманця отримувача:</label>
             <input
               type="text"
               value={recipientWallet}
               onChange={(e) => setRecipientWallet(e.target.value)}
-              placeholder="Наприклад: 5Dk...kLu"
-              className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
+              className="w-full p-2 sm:p-3 rounded-lg bg-gray-800 text-white border border-gray-600 text-sm sm:text-base"
+              placeholder="Введіть адресу гаманця..."
             />
           </div>
 
           <button
             onClick={handleMint}
             disabled={loading}
-            className="bg-pink-600 hover:bg-pink-700 transition px-6 py-3 rounded-xl text-white text-lg shadow disabled:opacity-50"
+            className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 sm:py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
           >
-            {loading ? 'Мінтимо...' : 'Створити NFT'}
+            {loading ? 'Створення...' : 'Створити NFT-листівку'}
           </button>
         </div>
       </div>
 
-      <ActivityRewardModal
-        isVisible={showRewardModal}
-        onClose={handleCloseRewardModal}
-        projectId={projectId}
-        activeDays={daysVisited}
-      />
+      {showRewardModal && (
+        <ActivityRewardModal
+          daysVisited={daysVisited}
+          onClose={handleCloseRewardModal}
+          projectId={projectId}
+        />
+      )}
     </main>
   );
 }
