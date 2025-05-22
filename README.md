@@ -1,40 +1,40 @@
-# 3GWish — Персоналізовані NFT-листівки на Solana
+# 3GWish — Personalized NFT Greeting Cards on Solana
 
-3GWish — це децентралізована платформа для створення, кастомізації та надсилання унікальних NFT-листівок друзям, партнерам або собі самому. Кожна листівка зберігається на блокчейні Solana, забезпечуючи прозорість, автентичність та довговічність.
+3GWish is a decentralized platform for creating, customizing, and sending unique NFT greeting cards to friends, partners, or yourself. Each card is stored on the Solana blockchain, ensuring transparency, authenticity, and longevity.
 
-##  Мета проекту
+## Project Goal
 
-Подарувати людям новий спосіб виражати емоції через NFT. Ми об'єднуємо емоційний зв'язок та Web3, щоб зробити цифрові подарунки не просто транзакцією, а пам'ятним досвідом.
+To give people a new way to express emotions through NFTs. We are combining emotional connection and Web3 to make digital gifts not just a transaction, but a memorable experience.
 
-##  Основні функції
+## Key Features
 
-- AI/UX-орієнтований підхід: користувач вводить повідомлення — ми автоматично генеруємо унікальну NFT-листівку.
-- Шаблони + Кастом : вибір готових шаблонів (день народження, свята, романтичні) або можливість завантажити своє зображення.
--  Мінтинг у 1 клік: створення NFT відбувається повністю на клієнті через Phantom-гаманець.
-- Дарування: автоматичне надсилання NFT-листівки іншому користувачу.
--  Механіка активності: користувачі отримують бонусні NFT за регулярне використання (гейміфікація).
+- AI/UX-oriented approach: the user enters a message — we automatically generate a unique NFT greeting card.
+- Templates + Custom: a selection of ready-made templates (birthday, holidays, romantic) or the ability to upload your own image.
+- 1-click minting: NFT creation happens entirely on the client-side via the Phantom wallet.
+- Gifting: automatic sending of an NFT greeting card to another user.
+- Activity mechanics: users receive bonus NFTs for regular use (gamification).
 
-##  Стек технологій
+## Technology Stack
 
-| Технологія       | Призначення                          |
-|------------------|-------------------------------------|
-| Next.js          | Фреймворк для фронтенду             |
-| TypeScript       | Статична типізація                  |
-| Solana Web3      | Підключення та взаємодія з Solana   |
-| Metaplex JS      | Мінт NFT                            |
-| Tailwind CSS     | Швидкий і сучасний UI               |
-| Pinata           | Завантаження файлів IPFS            |
-| Sonner           | Нотифікації                         |
+| Technology       | Purpose                                     |
+|------------------|---------------------------------------------|
+| Next.js          | Frontend framework                          |
+| TypeScript       | Static typing                               |
+| Solana Web3      | Connection and interaction with Solana      |
+| Metaplex JS      | NFT minting                                 |
+| Tailwind CSS     | Fast and modern UI                          |
+| Pinata           | IPFS file uploads                           |
+| Sonner           | Notifications                               |
 
-##  Безпека та приватність
+## Security and Privacy
 
-- Жодні дані не зберігаються на сервері.
-- Весь процес мінта відбувається в браузері користувача.
-- Власник гаманця підтверджує кожну транзакцію вручну.
+- No data is stored on the server.
+- The entire minting process takes place in the user's browser.
+- The wallet owner confirms each transaction manually.
 
-##  Як запустити проєкт локально
+## How to Run the Project Locally
 
-1. Клонувати репозиторій:
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/3GWish/3g-wish.git
