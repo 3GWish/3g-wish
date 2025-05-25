@@ -43,7 +43,7 @@ export default function CreateCard() {
   const [loading, setLoading] = useState(false);
   const [daysVisited, setDaysVisited] = useState(0);
   const [showRewardModal, setShowRewardModal] = useState(false);
-  const [projectId] = useState('nft-greetings-app'); 
+  const [projectId] = useState('nft-greetings-app');
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user-templates');
@@ -69,7 +69,7 @@ export default function CreateCard() {
 
     setDaysVisited(savedDates.length);
 
-    
+
     if (!alreadyVisitedToday && savedDates.length >= 1) {
       setShowRewardModal(true);
     }
@@ -156,20 +156,22 @@ export default function CreateCard() {
       <div className="grid md:grid-cols-2 gap-4 sm:gap-8">
         <div className="bg-gray-900 p-3 sm:p-4 rounded-xl shadow-lg flex flex-col items-center">
           <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Превʼю</h2>
-          <div className="relative w-full aspect-[4/5] max-w-[280px] sm:max-w-sm border-4 border-pink-400 rounded-xl overflow-hidden bg-white">
-            <img
-              src={
-                template === 'custom'
-                  ? customImage || ''
-                  : template === 'user'
-                    ? userTemplates.find((t) => t.id === selectedUserTemplateId)?.image || ''
-                    : template === 'customTemplate' && selectedCustomTemplateIndex !== null
-                      ? customTemplates[selectedCustomTemplateIndex]?.image || ''
-                      : templates[template]
-              }
-              alt="Template"
-              className="absolute w-full h-full object-cover"
-            />
+          <div className="relative w-full max-w-[280px] sm:max-w-sm border-4 border-pink-400 rounded-xl overflow-hidden bg-white flex justify-center items-center">
+            <div className="w-full h-auto max-h-[500px]"> 
+              <img
+                src={
+                  template === 'custom'
+                    ? customImage || ''
+                    : template === 'user'
+                      ? userTemplates.find((t) => t.id === selectedUserTemplateId)?.image || ''
+                      : template === 'customTemplate' && selectedCustomTemplateIndex !== null
+                        ? customTemplates[selectedCustomTemplateIndex]?.image || ''
+                        : templates[template]
+                }
+                alt="Template"
+                className="w-full h-auto object-contain" 
+              />
+            </div>
             <p className="absolute bottom-4 left-4 right-4 text-black text-base sm:text-lg font-bold bg-white bg-opacity-70 rounded p-2">
               {message || 'Напиши щось тепле...'}
             </p>
