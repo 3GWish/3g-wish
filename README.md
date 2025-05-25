@@ -38,4 +38,5 @@ To give people a new way to express emotions through NFTs. We are combining emot
 
 ```bash
 git clone https://github.com/3GWish/3g-wish.git
-cd giftchain
+cd 3g-wish
+npm run dev
