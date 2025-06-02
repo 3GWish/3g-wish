@@ -6,26 +6,11 @@ import { GiftNFT } from '@/app/lib/gift-nft';
 import { toast } from 'sonner';
 import ActivityRewardModal from '@/app/components/ActivityRewardModal';
 
-type UserTemplate = {
-  id: string;
-  name: string;
-  message: string;
-  image: string;
-};
-
-type CustomTemplate = {
-  image: string;
-  message: string;
-  name: string;
-};
-
 const templates = {
   birthday: '/templates/birthday.png',
   valentine: '/templates/valentine.png',
   newyear: '/templates/newyear.png',
-  custom: '',
   user: '',
-  customTemplate: '',
 } as const;
 
 type TemplateKey = keyof typeof templates;
@@ -38,23 +23,29 @@ export default function CreateCard() {
   const [customImage, setCustomImage] = useState<string | null>(null);
   const [userTemplates, setUserTemplates] = useState<UserTemplate[]>([]);
   const [selectedUserTemplateId, setSelectedUserTemplateId] = useState<string | null>(null);
-  const [customTemplates, setCustomTemplates] = useState<CustomTemplate[]>([]);
-  const [selectedCustomTemplateIndex, setSelectedCustomTemplateIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [daysVisited, setDaysVisited] = useState(0);
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [projectId] = useState('nft-greetings-app');
+  
+  const fetchTemplates = async () => {
+    if (!wallet.publicKey) return;
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user-templates');
-    if (storedUser) {
-      setUserTemplates(JSON.parse(storedUser));
+    try {
+      const userRes = await fetch('/api/templates/user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ walletAddress: wallet.publicKey.toString() }),
+      });
+      const userData = await userRes.json();
+      setUserTemplates(userData);
+    } catch (error) {
+      console.error('Failed to fetch templates:', error);
+      toast.error('Не вдалося завантажити шаблони');
     }
-    const storedCustom = localStorage.getItem('customTemplates');
-    if (storedCustom) {
-      setCustomTemplates(JSON.parse(storedCustom));
-    }
-  }, []);
+  };
 
   useEffect(() => {
     const savedDates = JSON.parse(localStorage.getItem('visit_dates') || '[]');
@@ -69,11 +60,16 @@ export default function CreateCard() {
 
     setDaysVisited(savedDates.length);
 
-
     if (!alreadyVisitedToday && savedDates.length >= 1) {
       setShowRewardModal(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (wallet.publicKey) {
+      fetchTemplates();
+    }
+  }, [wallet.publicKey]);
 
   const handleCloseRewardModal = () => {
     setShowRewardModal(false);
@@ -90,21 +86,10 @@ export default function CreateCard() {
 
   const handleUserTemplateChange = (id: string) => {
     setSelectedUserTemplateId(id);
-    setSelectedCustomTemplateIndex(null);
     const template = userTemplates.find((t) => t.id === id);
     if (template) {
       setMessage(template.message);
-      setCustomImage(template.image);
-    }
-  };
-
-  const handleCustomTemplateChange = (index: number) => {
-    setSelectedCustomTemplateIndex(index);
-    setSelectedUserTemplateId(null);
-    const template = customTemplates[index];
-    if (template) {
-      setMessage(template.message);
-      setCustomImage(template.image);
+      setCustomImage(template.image_url);
     }
   };
 
@@ -121,13 +106,9 @@ export default function CreateCard() {
 
     let imageUrl = '';
 
-    if (template === 'custom' && customImage) {
-      imageUrl = customImage;
-    } else if (template === 'user' && selectedUserTemplateId) {
+    if (template === 'user' && selectedUserTemplateId) {
       const t = userTemplates.find((t) => t.id === selectedUserTemplateId);
-      imageUrl = t?.image || '';
-    } else if (template === 'customTemplate' && selectedCustomTemplateIndex !== null) {
-      imageUrl = customTemplates[selectedCustomTemplateIndex].image;
+      imageUrl = t?.image_url || '';
     } else {
       imageUrl = templates[template];
     }
@@ -160,13 +141,9 @@ export default function CreateCard() {
             <div className="w-full h-auto max-h-[500px]"> 
               <img
                 src={
-                  template === 'custom'
-                    ? customImage || ''
-                    : template === 'user'
-                      ? userTemplates.find((t) => t.id === selectedUserTemplateId)?.image || ''
-                      : template === 'customTemplate' && selectedCustomTemplateIndex !== null
-                        ? customTemplates[selectedCustomTemplateIndex]?.image || ''
-                        : templates[template]
+                  template === 'user'
+                    ? userTemplates.find((t) => t.id === selectedUserTemplateId)?.image_url || ''
+                    : templates[template]
                 }
                 alt="Template"
                 className="w-full h-auto object-contain" 
@@ -197,30 +174,15 @@ export default function CreateCard() {
               onChange={(e) => {
                 setTemplate(e.target.value as TemplateKey);
                 if (e.target.value !== 'user') setSelectedUserTemplateId(null);
-                if (e.target.value !== 'customTemplate') setSelectedCustomTemplateIndex(null);
               }}
               className="w-full p-2 sm:p-3 rounded-lg bg-gray-800 text-white border border-gray-600 text-sm sm:text-base"
             >
               <option value="birthday">🎉 День народження</option>
               <option value="valentine">💖 Валентинка</option>
-              <option value="newyear">🌟 Новий рік</option>
-              <option value="custom">📁 Завантажити своє</option>
-              {userTemplates.length > 0 && <option value="user">👤 Мої шаблони</option>}
-              {customTemplates.length > 0 && <option value="customTemplate">🖼️ Мої завантажені</option>}
+              <option value="newyear">🌟 Новий рік</option>              
+              {userTemplates.length > 0 && <option value="user">👤 Мої шаблони</option>}              
             </select>
-          </div>
-
-          {template === 'custom' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Ваше зображення:</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-600 text-sm"
-              />
-            </div>
-          )}
+          </div>         
 
           {template === 'user' && (
             <div>
@@ -235,26 +197,6 @@ export default function CreateCard() {
                 </option>
                 {userTemplates.map((t) => (
                   <option key={t.id} value={t.id}>
-                    🖼️ {t.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {template === 'customTemplate' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Оберіть завантажений шаблон:</label>
-              <select
-                value={selectedCustomTemplateIndex !== null ? selectedCustomTemplateIndex : ''}
-                onChange={(e) => handleCustomTemplateChange(parseInt(e.target.value))}
-                className="w-full p-2 sm:p-3 rounded-lg bg-gray-800 text-white border border-gray-600 text-sm sm:text-base"
-              >
-                <option value="" disabled>
-                  -- Оберіть --
-                </option>
-                {customTemplates.map((t, index) => (
-                  <option key={index} value={index}>
                     🖼️ {t.name}
                   </option>
                 ))}

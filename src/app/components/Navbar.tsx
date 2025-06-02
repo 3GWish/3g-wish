@@ -41,6 +41,9 @@ export default function Navbar() {
                         <Link href="/create-flyer" className="hover:text-pink-400 transition">
                             ✨ Створити
                         </Link>
+                        <Link href="/create-template" className="hover:text-pink-400 transition">
+                             Створити шаблон
+                        </Link>                        
                     </>
                 )}
                 <div>
@@ -79,6 +82,13 @@ export default function Navbar() {
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     ✨ Створити
+                                </Link>
+                                <Link 
+                                    href="/create-template" 
+                                    className="hover:text-pink-400 transition text-lg font-semibold"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                     Створити шаблон
                                 </Link>
                             </>
                         )}
