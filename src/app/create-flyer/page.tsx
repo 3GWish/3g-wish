@@ -27,7 +27,7 @@ export default function CreateCard() {
   const [daysVisited, setDaysVisited] = useState(0);
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [projectId] = useState('nft-greetings-app');
-  
+
   const fetchTemplates = async () => {
     if (!wallet.publicKey) return;
 
@@ -75,15 +75,6 @@ export default function CreateCard() {
     setShowRewardModal(false);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setCustomImage(reader.result as string);
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleUserTemplateChange = (id: string) => {
     setSelectedUserTemplateId(id);
     const template = userTemplates.find((t) => t.id === id);
@@ -122,6 +113,22 @@ export default function CreateCard() {
     try {
       const nftAddress = await GiftNFT(wallet, message || 'Напиши щось тепле...', recipientWallet, imageUrl);
       toast.success(`NFT успішно створено! Адреса: ${nftAddress}`);
+      if (template === 'user' && selectedUserTemplateId) {
+        try {
+          await fetch('/api/templates/increment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              templateId: selectedUserTemplateId,
+              walletAddress: wallet.publicKey.toString()
+            }),
+          });
+        } catch (error) {
+          console.error('Failed to increment template counter:', error);
+        }
+      }
     } catch (err) {
       console.error(err);
       toast.error('Сталася помилка під час мінта.');
@@ -138,7 +145,7 @@ export default function CreateCard() {
         <div className="bg-gray-900 p-3 sm:p-4 rounded-xl shadow-lg flex flex-col items-center">
           <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Превʼю</h2>
           <div className="relative w-full max-w-[280px] sm:max-w-sm border-4 border-pink-400 rounded-xl overflow-hidden bg-white flex justify-center items-center">
-            <div className="w-full h-auto max-h-[500px]"> 
+            <div className="w-full h-auto max-h-[500px]">
               <img
                 src={
                   template === 'user'
@@ -146,7 +153,7 @@ export default function CreateCard() {
                     : templates[template]
                 }
                 alt="Template"
-                className="w-full h-auto object-contain" 
+                className="w-full h-auto object-contain"
               />
             </div>
             <p className="absolute bottom-4 left-4 right-4 text-black text-base sm:text-lg font-bold bg-white bg-opacity-70 rounded p-2">
@@ -179,10 +186,10 @@ export default function CreateCard() {
             >
               <option value="birthday">🎉 День народження</option>
               <option value="valentine">💖 Валентинка</option>
-              <option value="newyear">🌟 Новий рік</option>              
-              {userTemplates.length > 0 && <option value="user">👤 Мої шаблони</option>}              
+              <option value="newyear">🌟 Новий рік</option>
+              {userTemplates.length > 0 && <option value="user">👤 Мої шаблони</option>}
             </select>
-          </div>         
+          </div>
 
           {template === 'user' && (
             <div>
