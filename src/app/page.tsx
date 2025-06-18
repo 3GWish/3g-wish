@@ -14,10 +14,7 @@ export default function Home() {
             Цифрові NFT-листівки для свят, днів народження та особливих моментів. Анімовані, персоналізовані, з крипто-подарунками.
           </p>          
         </div>
-
-        <div className="flex justify-center">
-          {/* Здесь можно добавить изображение или анимацию */}
-        </div>
+        
       </section>
 
       
@@ -49,10 +46,10 @@ export default function Home() {
           <a href="https://twitter.com/3gwish" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">
             Twitter
           </a>
-          <a href="https://t.me/GWish_adm" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">
+          <a href="https://t.me/threegwish" target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">
             Telegram
           </a>
-          <a href="krav.ol3ks@gmail.com" className="hover:text-pink-400">
+          <a href="mailto:team@3gwish.xyz" className="hover:text-pink-400">
             Email
           </a>
         </div>

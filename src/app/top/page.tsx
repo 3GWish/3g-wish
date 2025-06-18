@@ -11,11 +11,38 @@ interface TopTemplate {
   usage_count: number;
 }
 
+
+const mockTemplates: TopTemplate[] = [
+  {
+    id: '1',
+    name: 'День народження',
+    image_url: '/templates/birthday.png',
+    wallet_address: '5Dk...kLu',
+    usage_count: 42
+  },
+  {
+    id: '2',
+    name: 'Валентинка',
+    image_url: '/templates/valentine.png',
+    wallet_address: '7Fm...pQr',
+    usage_count: 38
+  },
+  {
+    id: '3',
+    name: 'Новий рік',
+    image_url: '/templates/newyear.png',
+    wallet_address: '9Xy...zAb',
+    usage_count: 25
+  }
+];
+
 export default function TopTemplates() {
   const [templates, setTemplates] = useState<TopTemplate[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+   
+    /*
     const fetchTopTemplates = async () => {
       try {
         const response = await fetch('/api/templates/top');
@@ -32,13 +59,25 @@ export default function TopTemplates() {
         setLoading(false);
       }
     };
-
     fetchTopTemplates();
+    */
+
+    
+    setTemplates(mockTemplates);
+    setLoading(false);
   }, []);
 
   return (
     <main className="min-h-screen bg-black text-white p-4 sm:p-6">
       <h1 className="text-2xl sm:text-3xl font-bold text-pink-400 mb-4 sm:mb-6">Топ шаблонів</h1>
+
+      
+      <div className="bg-gray-900 border-2 border-pink-400 rounded-xl p-4 mb-6 shadow-lg">
+        <h2 className="text-xl font-bold text-pink-400 mb-2">🏆 Нагорода для найпопулярнішого шаблону</h2>
+        <p className="text-gray-200">
+          Автор найпопулярнішого шаблону отримає <span className="font-bold text-pink-300">300 USDT</span> та ексклюзивне <span className="font-bold text-pink-300">NFT</span> від компанії!
+        </p>
+      </div>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
@@ -73,7 +112,7 @@ export default function TopTemplates() {
               
               <h3 className="text-lg font-semibold text-white truncate">{template.name}</h3>
               <p className="text-gray-400 text-sm truncate">
-                Автор: {template.wallet_address.slice(0, 6)}...{template.wallet_address.slice(-4)}
+                Автор: {template.wallet_address}
               </p>
             </div>
           ))}
